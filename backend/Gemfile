@@ -27,6 +27,7 @@ gem 'rack-cors'
 
 # AWS SDK for S3 (MinIO)
 gem 'aws-sdk-s3'
+gem 'aws-sdk-cognitoidentityprovider'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

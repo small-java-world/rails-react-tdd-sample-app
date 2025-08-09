@@ -5,14 +5,23 @@ services:
     build: ./backend
     ports:
       - "3000:3000"
+    command: bash -lc "bundle exec rails server -b 0.0.0.0 -p 3000"
+    environment:
+      - RAILS_ENV=development
+      - RUBYOPT=-rlogger
+      - MYSQL_HOST=db
+      - MYSQL_USER=myapp
+      - MYSQL_PASSWORD=myapp_pass
+      - MYSQL_DATABASE=myapp_development
+      - AWS_ACCESS_KEY_ID=minioadmin
+      - AWS_SECRET_ACCESS_KEY=minioadmin
+      - AWS_REGION=us-east-1
     depends_on:
       - db
       - minio
       - cognito
     volumes:
       - ./backend:/app
-    environment:
-      - RAILS_ENV=development
 
   frontend:
     image: node:18-alpine

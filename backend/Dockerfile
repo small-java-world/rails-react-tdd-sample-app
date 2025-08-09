@@ -8,8 +8,8 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
 
 WORKDIR /app
 
-# Copy only Gemfile to leverage Docker cache
-COPY Gemfile ./
+# Copy Gemfile and Gemfile.lock to leverage Docker cache and ensure dependency consistency
+COPY Gemfile Gemfile.lock ./
 
 # Run bundle install
 RUN bundle install

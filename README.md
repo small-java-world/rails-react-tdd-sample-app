@@ -1,6 +1,6 @@
-# Tumiki Sample Project 🚀
+# rails-react-tdd-sample-app
 
-**React + MySQL + MinIO** を使用した開発環境テンプレート + **Tsumiki AI開発支援**
+Rails + React のTDD題材サンプルアプリ（最小構成）。Docker Composeで起動し、/health による疎通とUT（Vitest/RSpec）がGreenの初期状態です。
 
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://docker.com)
 [![React](https://img.shields.io/badge/React-18-blue.svg)](https://reactjs.org)
@@ -9,21 +9,22 @@
 
 ## 🌐 railsとreactのtddの題材のサンプルアプリ（TDD対象の最小サービス）
 
-このディレクトリ（`myapp/`）は、「railsとreactのtddの題材のサンプルアプリ」のソースです。以降の開発は、Tsumiki と Claude Code を用いた TDD の Red→Green→Refactor サイクルで進めます。
+このディレクトリ（`rails-react-tdd-sample-app/`）は、「railsとreactのtddの題材のサンプルアプリ」のソースです。以降の開発は、Tsumiki と Claude Code を用いた TDD の Red→Green→Refactor サイクルで進めます。
 
 ### 🚀 起動
 ```bash
-cd myapp
+cd rails-react-tdd-sample-app
 docker compose up -d --build
 ```
 
 起動後の確認:
+- Backend: http://localhost:3000/health（JSONが返ればOK）
 - Frontend: http://localhost:3001
 - MySQL: localhost:3306（DB: `myapp_development`, ユーザー: `myapp` / `myapp_pass`）
 - MinIO Console: http://localhost:9003（`minioadmin`/`minioadmin`）
 
 ### 🧪 TDD フロー（Tsumiki + Claude Code）
-作業は常に `myapp/` をカレントにして実行します。
+作業は常に `rails-react-tdd-sample-app/` をカレントにして実行します。
 
 1) 失敗テスト生成（Red）
 ```bash
@@ -45,6 +46,12 @@ claude -p "/tdd-refactor 重複排除・命名改善・構成の整理を提案�
 claude -p "/tdd-requirements railsとreactのtddの題材のサンプルアプリのサービス詳細画面の機能要件を優先度順に整理してください"
 ```
 
+#### ✅ 最短ゴール（Green確認）
+- Backend（RSpec）: `docker compose exec backend bash -lc "RAILS_ENV=test bundle exec rspec --format documentation"`
+- Frontend（Vitest）: `docker compose exec frontend sh -lc "npm test -- --run"`
+
+> 互換メモ: Node 18 + vitest@^1.6.0 で確認済み。設定ファイルは `vitest.config.mts` を使用。
+
 ## 📋 プロジェクト概要
 
 このプロジェクトは、**Tsumiki AI開発ツール** と **Serena MCP (LSP ベースセマンティックエンジン)** を組み合わせたモダン Web 開発環境テンプレートです。Docker Compose で必要なサービスを簡単に起動し、AI 支援開発を体験できます。
@@ -62,10 +69,12 @@ claude -p "/tdd-requirements railsとreactのtddの題材のサンプルアプ�
 ## 🛠️ 技術スタック
 
 ### 🟢 **現在動作中**
-- **React 18** + **Node.js 18** - フロントエンド
-- **MySQL 8.0** - メインデータベース
-- **MinIO** - S3互換オブジェクトストレージ
-- **Docker** + **Docker Compose** - コンテナ環境
+- **React 18 + Node.js 18**（Frontend, Vitest済）
+- **Rails 7 API**（/health 実装・RSpec済）
+- **MySQL 8.0**（DB接続確認済）
+- **MinIO**（S3互換）
+- **moto (Cognito代替)**
+- **Docker / Docker Compose**
 
 ### 🤖 **AI開発支援**
 - **Tsumiki** - AI駆動開発コマンド集（21種類）
@@ -74,9 +83,9 @@ claude -p "/tdd-requirements railsとreactのtddの題材のサンプルアプ�
 - **手動参照** - Markdown ファイル直接参照
 
 ### 🚧 **開発予定**
-- **Rails 7.0** - REST API バックエンド
-- **AWS Cognito代替** - 認証システム
-- **テスト環境** - RSpec + FactoryBot
+- REST API拡充（業務ドメイン）
+- 認証（moto / Cognito代替）
+- RSpec/FactoryBotによるUT強化
 
 ## 🚀 クイックスタート
 
@@ -120,7 +129,7 @@ claude mcp add serena -s project -- uvx --from git+https://github.com/oraios/ser
 | **React Frontend** | http://localhost:3001 | ✅ **動作中** | Webアプリケーション |
 | **MinIO Console** | http://localhost:9003 | ✅ **動作中** | ストレージ管理画面 |
 | **MySQL** | localhost:3306 | ✅ **動作中** | データベース接続 |
-| **Rails Backend** | http://localhost:3000 | 🚧 **開発中** | REST API（未実装） |
+| **Rails Backend** | http://localhost:3000/health | ✅ **動作中** | /health で疎通確認 |
 
 ## 🔀 Git Worktree 並列開発 (概要)
 
@@ -146,7 +155,7 @@ code .
 ## 📁 ディレクトリ構成
 
 ```
-tumiki-sample-project/
+rails-react-tdd-sample-app/
 ├── .claude/commands/          # ✅ Tsumiki AIコマンド集（21個）
 │   ├── kairo-*.md            # 要件→実装フロー
 │   ├── tdd-*.md              # テスト駆動開発
@@ -154,13 +163,13 @@ tumiki-sample-project/
 ├── frontend/                  # ✅ React SPA（動作中）
 │   ├── package.json          # Node.js依存関係
 │   ├── src/                  # Reactソースコード
-│   │   ├── App.js            # メインコンポーネント
+│   │   ├── App.jsx           # メインコンポーネント
 │   │   └── index.js          # エントリーポイント
 │   └── public/               # 静的ファイル
-├── backend/                   # 🚧 Rails API（開発中）
-│   ├── Dockerfile            # Rails用Dockerファイル  
+├── backend/                   # ✅ Rails API（/health実装済み）
+│   ├── Dockerfile            # Rails用Dockerファイル
 │   ├── Gemfile               # Ruby依存関係
-│   └── config/               # Rails設定（部分実装）
+│   └── spec/                 # RSpec（/healthのrequest spec）
 ├── docker-compose.yml         # ✅ サービス定義
 ├── .mcp.json                # Serena MCP 設定ファイル
 ├── .gitignore                # Git除外設定
@@ -352,17 +361,14 @@ docker compose down --volumes  # ボリュームも削除
 ### 個別サービステスト
 
 ```bash
-# ✅ Frontend（React）開発確認
-docker compose exec frontend npm start
+# ✅ Frontend（React）ログ追跡（開発サーバーは常時起動）
+docker compose logs -f frontend
 
 # ✅ データベース接続
 docker compose exec db mysql -u myapp -p
 
-# ✅ MinIO CLI操作
-docker compose exec minio mc --help
-
-# 🚧 Backend（Rails）テスト（現在未実装）
-# docker compose exec backend bundle exec rspec
+# ✅ Backend（Rails）テスト
+docker compose exec backend bash -lc "RAILS_ENV=test bundle exec rspec --format documentation"
 ```
 
 ## 🌐 サービス詳細
@@ -387,10 +393,10 @@ docker compose exec minio mc --help
 - **バケット**: `myapp-bucket`
 - **ボリューム**: `minio-data`（永続化）
 
-### 🚧 **Backend（Rails API）** - 開発中
-- **予定ポート**: 3000
-- **状況**: 設定不完全によりサービス停止中
-- **次回実装**: Rails 7.0 + REST API
+### ✅ **Backend（Rails API）**
+- **ポート**: 3000
+- **疎通**: http://localhost:3000/health が 200 OK を返す
+- **テスト**: RSpec（request spec）
 
 ### 🚧 **認証（AWS Cognito代替）** - 開発予定
 - **予定ポート**: 5000
@@ -466,7 +472,7 @@ git push origin feature/新機能名
 - **Rails**: RuboCop準拠
 - **React**: ESLint + Prettier
 - **コミット**: Conventional Commits
-- **テスト**: RSpec（Backend）+ Jest（Frontend）
+- **テスト**: RSpec（Backend）+ Vitest（Frontend）
 
 ## 🤝 コントリビューション
 
@@ -545,4 +551,4 @@ git push origin feature/新機能名
 
 **🎉 Happy Coding with Tsumiki AI Development! 🤖✨**
 
-*このプロジェクトは**エンタープライズレベル**の開発環境を提供し、AI支援による高効率開発を実現します。*\n# rails-react-tdd-sample-app
+*このプロジェクトは**エンタープライズレベル**の開発環境を提供し、AI支援による高効率開発を実現します。*
