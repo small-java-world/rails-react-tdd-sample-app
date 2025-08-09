@@ -28,4 +28,17 @@ test('health check button triggers fetch and shows result or error placeholder',
   global.fetch = originalFetch
 })
 
+test('theme selection updates data-theme immediately', async () => {
+  render(<App />)
+  const htmlEl = document.documentElement
+
+  // default should be light
+  expect(htmlEl.getAttribute('data-theme')).toBe('light')
+
+  const select = await screen.findByLabelText(/Theme/i)
+  await userEvent.selectOptions(select, 'dark')
+
+  expect(htmlEl.getAttribute('data-theme')).toBe('dark')
+})
+
 

@@ -6,6 +6,7 @@ function App() {
   const [apiHealth, setApiHealth] = useState(null);
   const [isChecking, setIsChecking] = useState(false);
   const [checkError, setCheckError] = useState(null);
+  const [theme, setTheme] = useState('light');
 
   useEffect(() => {
     const timerId = setInterval(() => setNow(new Date()), 1000);
@@ -30,11 +31,27 @@ function App() {
     }
   };
 
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+
   return (
     <div className="App">
       <header className="App-header">
         <h1>railsとreactのtddの題材のサンプルアプリ Frontend</h1>
         <p>Rails + React + MySQL + MinIO + moto（Cognito代替）</p>
+        <div style={{ marginTop: '0.75rem' }}>
+          <label htmlFor="theme-select">Theme: </label>
+          <select
+            id="theme-select"
+            aria-label="Theme"
+            value={theme}
+            onChange={(e) => setTheme(e.target.value)}
+          >
+            <option value="light">light</option>
+            <option value="dark">dark</option>
+          </select>
+        </div>
         <div style={{ marginTop: '1rem', fontSize: '1.1rem' }}>
           <span>System time: </span>
           <strong>{now.toLocaleString()}</strong>
