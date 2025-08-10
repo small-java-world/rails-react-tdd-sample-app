@@ -253,3 +253,139 @@ TASK-００１ に対する /tdd-refactor の成果物をレビューしてく�
 補足:
 - 必要に応じて重複検出ツール（jscpd など）の観点もお願いします。
 ```
+
+### 一括レビュー依頼テンプレート（TASK-001〜005）
+
+以下をそのままコピーして、対象タスク番号だけ差し替えて使えます。
+
+#### TASK-001 基本設定UI
+- /tdd-green
+```text
+TASK-001 に対する /tdd-green の成果物をレビューしてください。
+
+対象:
+- UI: Theme/Refresh Interval/Display Density のselect要素（デフォルト light/Off/standard）
+- 変更ファイル（例）:
+  - frontend/src/UserPreferences.jsx
+  - frontend/src/UserPreferences.test.jsx
+
+確認観点:
+- 3つのselect表示、選択肢と初期値、aria-label の有無
+- Red→Green 成立（テスト妥当性）
+- 命名・責務分割・過不足のない最小実装
+```
+
+- /tdd-refactor
+```text
+TASK-001 に対する /tdd-refactor の成果物をレビューしてください。
+
+対象:
+- 重複排除（App側とのUI重複がないこと）
+- 共通化・定数の外出し、アクセシビリティ改善
+
+確認観点:
+- 動作維持（全テストGreen）
+- 見通し・拡張性・依存方向の適切さ
+```
+
+#### TASK-002 即時反映機能
+- /tdd-green
+```text
+TASK-002 に対する /tdd-green の成果物をレビューしてください。
+
+対象:
+- 即時反映: `<html data-theme>`, `<body class="density-*>">`, タイマー間隔の更新
+- 変更ファイル（例）:
+  - frontend/src/UserPreferences.jsx（useEffect等）
+  - frontend/src/App.jsx（必要なら）
+
+確認観点:
+- 100ms以内の反映、視覚的フィードバック
+- テスト（統合/単体）の妥当性
+```
+
+- /tdd-refactor
+```text
+TASK-002 に対する /tdd-refactor の成果物をレビューしてください。
+
+対象:
+- DOM更新ロジックの分離（utils/dom など）
+- ハンドラのメモ化・責務整理
+
+確認観点:
+- 動作維持、重複削減、将来のhook化/最適化しやすさ
+```
+
+#### TASK-003 localStorage 永続化
+- /tdd-green
+```text
+TASK-003 に対する /tdd-green の成果物をレビューしてください。
+
+対象:
+- 保存/復元: localStorage（key: userPreferences.* または userPreferences）
+- 変更ファイル（例）:
+  - frontend/src/UserPreferences.jsx
+  - frontend/src/__tests__/…（保存/復元/エラー系）
+
+確認観点:
+- ページ再読込での復元、1KB以内、エラー時フォールバック
+```
+
+- /tdd-refactor
+```text
+TASK-003 に対する /tdd-refactor の成果物をレビューしてください。
+
+対象:
+- 永続化ロジックの分離（hooks: useLocalStorage / useUserPreferences）
+- バリデーション/エラーハンドリングの共通化
+
+確認観点:
+- 動作維持、APIの明確さ、テスト容易性
+```
+
+#### TASK-004 リセット機能
+- /tdd-green
+```text
+TASK-004 に対する /tdd-green の成果物をレビューしてください。
+
+対象:
+- Resetボタン、confirm()、既定値復元、localStorageクリア、DOM初期化
+
+確認観点:
+- シナリオ一貫性、UI/UX（確認ダイアログ、フィードバック）
+```
+
+- /tdd-refactor
+```text
+TASK-004 に対する /tdd-refactor の成果物をレビューしてください。
+
+対象:
+- リセット処理の関数分離、再利用性、テスト容易性
+
+確認観点:
+- 動作維持、責務分離、エッジケースの扱い
+```
+
+#### TASK-005 統合テスト・最適化
+- /tdd-green
+```text
+TASK-005 に対する /tdd-green の成果物をレビューしてください。
+
+対象:
+- E2Eフロー（変更→保存→リロード→復元→リセット）
+
+確認観点:
+- 主要ブラウザ/パフォーマンス/アクセシビリティ要件
+```
+
+- /tdd-refactor
+```text
+TASK-005 に対する /tdd-refactor の成果物をレビューしてください。
+
+対象:
+- ボトルネック改善（debounce, バッチDOM更新 等）
+- テストの重複/ムダの削減
+
+確認観点:
+- 動作維持、パフォーマンス目標、テストメンテ性
+```
