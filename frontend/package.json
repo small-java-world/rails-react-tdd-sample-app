@@ -4,16 +4,22 @@
   "private": true,
   "proxy": "http://backend:3000",
   "dependencies": {
+    "@vitejs/plugin-react": "^4.7.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
+    "vite": "^6.3.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "vitest --config vitest.config.mts",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "dup:frontend": "jscpd --reporters console --threshold 2 --ignore \"**/node_modules/**\" --ignore \"**/coverage/**\" --ignore \"**/dist/**\" --ignore \"**/.git/**\" src",
+    "dup:backend": "jscpd --reporters console --threshold 2 --ignore \"**/node_modules/**\" --ignore \"**/coverage/**\" --ignore \"**/dist/**\" --ignore \"**/.git/**\" ../backend",
+    "dup": "npm run dup:frontend && npm run dup:backend",
+    "dup:report": "jscpd --reporters console,html --output ../reports/jscpd --ignore \"**/node_modules/**\" --ignore \"**/coverage/**\" --ignore \"**/dist/**\" --ignore \"**/.git/**\" src ../backend"
   },
   "eslintConfig": {
     "extends": [
@@ -37,6 +43,7 @@
     "@testing-library/jest-dom": "^6.6.4",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
+    "jscpd": "^4.0.5",
     "jsdom": "^26.1.0",
     "vitest": "^1.6.0"
   }

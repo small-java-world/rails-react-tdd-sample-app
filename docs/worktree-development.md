@@ -64,6 +64,7 @@ Tsumiki を使用するために、まず **Claude Code CLI** をホスト OS �
 | 2. API キー登録 | `claude login` | `ANTHROPIC_API_KEY` を入力 |
 | 3. Tsumiki コマンド一式導入 | `npx tsumiki install` | `.claude/commands/` が生成 |
 | 4. allowedTools テンプレ修正 | `.claude/commands/tdd-red.md` など `execution:` を編集し<br/>`Bash(cx *)` を許可 | Worktree ラッパー関数 `cx` を利用 |
+| 5. 生成物後処理（任意） | `/kairo-tasks` 実行後に `pwsh ./scripts/add-cursor-review-template.ps1` | 生成物に Cursor レビュー依頼テンプレを自動挿入 |
 
 > **Tips**
 > - API キーは macOS/Linux は `~/.config/claude/`、Windows は `%APPDATA%\claude\` に保存されます。
@@ -363,6 +364,27 @@ docker compose exec backend bundle exec rspec
 | Linux/Mac | `scripts/setup-worktree.sh` | `scripts/worktree-helper.sh` |
 
 > スクリプトが使えない場合も、前述の *手動コマンド* で同様にセットアップできます。
+
+### 生成物の後処理フック（テンプレ挿入）
+
+Tsumiki 配布テンプレ（`.claude/commands/*`）は編集せず、生成物に対して後処理でテンプレートを挿入します。
+
+- スクリプト: `scripts/add-cursor-review-template.ps1`
+- 目的: `/kairo-tasks` が生成した `docs/tasks/{要件名}-tasks.md` の「実行コマンド例」直後に、各タスク（TASK-001〜005）用の「Cursor レビュー依頼テンプレート（/tdd-green, /tdd-refactor）」を自動挿入
+
+使い方
+
+```powershell
+pwsh ./scripts/add-cursor-review-template.ps1
+# または個別指定
+pwsh ./scripts/add-cursor-review-template.ps1 -Path docs/tasks/<要件名>-tasks.md
+```
+
+検証
+
+```powershell
+Select-String -Path docs/tasks/<要件名>-tasks.md -Pattern "^###\s+Cursor\s+レビュー依頼テンプレート" -SimpleMatch
+```
 
 ---
 
