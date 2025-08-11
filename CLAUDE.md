@@ -10,7 +10,7 @@
 
 ## 1) jscpd 重複コードチェック（TDD 連動）
 
-最小の実行手順と出力先を示すこと。必要以上に長くしないこと。
+最小の実行手順と出力先を示すこと。必要以上に長くしないこと。詳細ルールは「docs/rules/kairo-tasks-jscpd-rules.md」を参照してください。
 
 ```bash
 cd frontend
