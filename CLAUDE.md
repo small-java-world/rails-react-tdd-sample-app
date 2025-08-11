@@ -20,6 +20,10 @@ npm run dup:report  # reports/jscpd/html/index.html
 補足（短文）:
 - `dup` は `src` と `../backend` を対象に実行します
 - 閾値・除外パターンは `frontend/package.json` の `dup:*` で調整
+ - 実行タイミング（推奨）:
+   - `/tdd-green` 完了“直後”に実行（新規実装による重複が出ていないか確認）
+   - `/tdd-refactor` “開始前”に実行（現状の重複を基準化）
+   - `/tdd-refactor` “完了後”に実行（重複削減の効果を HTML レポートで検証）
 
 ## 2) Cursor レビュー依頼テンプレート（全タスク共通）
 
