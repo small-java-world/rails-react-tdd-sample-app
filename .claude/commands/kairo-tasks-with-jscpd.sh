@@ -11,14 +11,7 @@ echo "[kairo-tasks-with-jscpd] Running /kairo-tasks"
 claude -p "/kairo-tasks" | cat
 echo "[kairo-tasks-with-jscpd] /kairo-tasks finished"
 
-# Post-process: insert jscpd usage + Cursor templates and run jscpd
-if command -v pwsh >/dev/null 2>&1; then
-  echo "[kairo-tasks-with-jscpd] Inserting review templates and jscpd section"
-  pwsh -NoLogo -NoProfile -File "$repo_root/scripts/add-cursor-review-template.ps1" || true
-else
-  echo "[kairo-tasks-with-jscpd] PowerShell (pwsh) not found; skipping template insertion" >&2
-fi
-
+# Run jscpd only (see CLAUDE.md for guidance)
 if [ -d "$repo_root/frontend" ]; then
   echo "[kairo-tasks-with-jscpd] Running jscpd (frontend + backend)"
   ( cd "$repo_root/frontend" && npm run -s dup ) || true
