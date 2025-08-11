@@ -26,6 +26,27 @@ docker compose up -d --build
 ### 🧪 TDD フロー（Tsumiki + Claude Code）
 作業は常に `rails-react-tdd-sample-app/` をカレントにして実行します。
 
+**まずは、ここから始めましょう！**
+
+0) 機能のタスク分割（`/kairo-tasks`）
+   - 最初に、開発する機能全体を具体的なタスクに分割します。
+   - 以下のコマンドを実行し、ESCキーで中断した後に、後述の2行の指示を貼り付けてください。
+
+   ```bash
+   claude -p "/kairo-tasks"
+   ```
+
+   - **ESCキーで追記する内容:**
+     - 1行目には、開発したい機能の分割を指示します。（`< >` の部分を書き換えてください）
+     - 2行目は、常に同じ内容をそのまま貼り付けます。
+
+     ```text
+     <例: User Preferences> を3〜5タスクへ分割してください。
+     タスク生成が完了したら、`docs/guides/kairo-tasks-dynamic-guide-rules.md` に定義されたルールを適用してください。
+     ```
+
+---
+
 1) 失敗テスト生成（Red）
 ```bash
 claude -p "/tdd-red サービス詳細の初期表示を検証するテストを生成し、実行して Red を確認してください"
