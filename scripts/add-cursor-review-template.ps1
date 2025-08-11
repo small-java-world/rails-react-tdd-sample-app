@@ -50,7 +50,7 @@ function BuildTemplateForTasks {
     # /tdd-green
     [void]$sb.AppendLine("#### TASK-$taskIdFull /tdd-green 用")
     [void]$sb.AppendLine()
-    [void]$sb.AppendLine("```text")
+    [void]$sb.AppendLine('```text')
     [void]$sb.AppendLine("TASK-$taskIdFull に対する /tdd-green の成果物をレビューしてください。")
     [void]$sb.AppendLine()
     [void]$sb.AppendLine("対象:")
@@ -66,13 +66,13 @@ function BuildTemplateForTasks {
     [void]$sb.AppendLine()
     [void]$sb.AppendLine("補足:")
     [void]$sb.AppendLine("- ローカルでテストはグリーンです（npm test）。")
-    [void]$sb.AppendLine("```")
+    [void]$sb.AppendLine('```')
     [void]$sb.AppendLine()
 
     # /tdd-refactor
     [void]$sb.AppendLine("#### TASK-$taskIdFull /tdd-refactor 用")
     [void]$sb.AppendLine()
-    [void]$sb.AppendLine("```text")
+    [void]$sb.AppendLine('```text')
     [void]$sb.AppendLine("TASK-$taskIdFull に対する /tdd-refactor の成果物をレビューしてください。")
     [void]$sb.AppendLine()
     [void]$sb.AppendLine("対象:")
@@ -88,7 +88,7 @@ function BuildTemplateForTasks {
     [void]$sb.AppendLine()
     [void]$sb.AppendLine("補足:")
     [void]$sb.AppendLine("- 必要に応じて重複検出ツール（jscpd など）の観点もお願いします。")
-    [void]$sb.AppendLine("```")
+    [void]$sb.AppendLine('```')
     [void]$sb.AppendLine()
   }
   return $sb.ToString()
