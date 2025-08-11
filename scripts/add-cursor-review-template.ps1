@@ -94,28 +94,53 @@ function BuildTemplateForTasks {
   return $sb.ToString()
 }
 
+function BuildJscpdSection {
+  $sb = New-Object System.Text.StringBuilder
+  [void]$sb.AppendLine('### jscpd 重複コードチェック')
+  [void]$sb.AppendLine()
+  [void]$sb.AppendLine('次のいずれかの方法で重複コードチェックを実行できます。')
+  [void]$sb.AppendLine()
+  [void]$sb.AppendLine('方法A: フロントエンドの npm スクリプト')
+  [void]$sb.AppendLine('```bash')
+  [void]$sb.AppendLine('cd frontend')
+  [void]$sb.AppendLine('npm run dup       # frontend + backend の重複検出（コンソール出力）')
+  [void]$sb.AppendLine('npm run dup:report  # HTML レポート生成（reports/jscpd/html/index.html）')
+  [void]$sb.AppendLine('```')
+  [void]$sb.AppendLine()
+  [void]$sb.AppendLine('方法B: ラッパースクリプトで一括実行（/kairo-tasks → jscpd → レポート）')
+  [void]$sb.AppendLine('```bash')
+  [void]$sb.AppendLine('pwsh ./scripts/run-tsumiki-with-jscpd.ps1 -Command "/kairo-tasks" -Report')
+  [void]$sb.AppendLine('```')
+  return $sb.ToString()
+}
+
 function InsertTemplateAfterCommandsSection {
   param([string]$text, [string]$template)
 
-  # If already present anywhere, do not insert again
-  if ($text -match "###\s*Cursor\s+レビュー依頼テンプレート") {
-    Write-Host "🔁 Template already present. Skipping insertion."
-    return $text
-  }
-
-  $commandsHeaderPattern = "###\s*実行コマンド例"
-  $headerMatch = [regex]::Match($text, $commandsHeaderPattern)
+  # Find commands header (## or ###)
+  $commandsHeaderPattern = '(?m)^##+\s*実行コマンド例\s*$'
+  $headerMatch = [regex]::Match($text, $commandsHeaderPattern, [System.Text.RegularExpressions.RegexOptions]::Multiline)
   if (-not $headerMatch.Success) {
-    throw "Commands section (### 実行コマンド例) not found."
+    # Fallback: append to the end
+    Write-Host 'Commands section not found. Appending to the end of the file.'
+    return $text.TrimEnd() + "`r`n`r`n" + $template.TrimEnd() + "`r`n"
   }
 
   # Find the end of the first fenced code block after the header
   $postHeader = $text.Substring($headerMatch.Index + $headerMatch.Length)
-  $openingFenceIndex = $postHeader.IndexOf("```")
-  if ($openingFenceIndex -lt 0) { throw "Opening code fence after commands header not found." }
+  $openingFenceIndex = $postHeader.IndexOf('```')
+  if ($openingFenceIndex -lt 0) {
+    # Insert right after the header if no fence found
+    $insertPosNoFence = $headerMatch.Index + $headerMatch.Length
+    return $text.Substring(0, $insertPosNoFence) + "`r`n`r`n" + $template.TrimEnd() + "`r`n" + $text.Substring($insertPosNoFence)
+  }
   $rest = $postHeader.Substring($openingFenceIndex + 3)
-  $closingFenceIndex = $rest.IndexOf("```")
-  if ($closingFenceIndex -lt 0) { throw "Closing code fence for commands block not found." }
+  $closingFenceIndex = $rest.IndexOf('```')
+  if ($closingFenceIndex -lt 0) {
+    # Insert after opening fence if closing not found
+    $insertPosOpen = $headerMatch.Index + $headerMatch.Length + $openingFenceIndex + 3
+    return $text.Substring(0, $insertPosOpen) + "`r`n`r`n" + $template.TrimEnd() + "`r`n" + $text.Substring($insertPosOpen)
+  }
 
   $insertPos = $headerMatch.Index + $headerMatch.Length + $openingFenceIndex + 3 + $closingFenceIndex + 3
   $before = $text.Substring(0, $insertPos)
@@ -139,7 +164,24 @@ try {
     $taskMatches = $temp
   }
 
-  $template = BuildTemplateForTasks -matches $taskMatches
+  $parts = New-Object System.Collections.Generic.List[string]
+  if ($raw -notmatch '(?m)^###\s*jscpd\s+重複コードチェック\s*$') {
+    $parts.Add((BuildJscpdSection).TrimEnd()) | Out-Null
+  } else {
+    Write-Host 'jscpd section already present. Skipping.'
+  }
+  if ($raw -notmatch '(?m)^###\s*Cursor\s+レビュー依頼テンプレート\s*$') {
+    $parts.Add((BuildTemplateForTasks -matches $taskMatches).TrimEnd()) | Out-Null
+  } else {
+    Write-Host 'Cursor review template already present. Skipping.'
+  }
+
+  if ($parts.Count -eq 0) {
+    Write-Host 'Nothing new to insert.'
+    return
+  }
+
+  $template = [string]::Join("`r`n`r`n", $parts)
   $updated = InsertTemplateAfterCommandsSection -text $raw -template $template
 
   if ($updated -ne $raw) {
