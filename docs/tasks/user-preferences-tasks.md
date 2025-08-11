@@ -2,164 +2,278 @@
 
 ## 概要
 
-全タスク数: 5
-推定作業時間: 8時間
-クリティカルパス: TASK-001 → TASK-002 → TASK-003 → TASK-004 → TASK-005
+全タスク数: 4
+推定作業時間: 8-12時間
+クリティカルパス: TASK-001 → TASK-002 → TASK-003 → TASK-004
 
 ## タスク一覧
 
-### フェーズ1: 基盤構築（設定UI）
+### フェーズ1: UI基盤とテーマ切替
 
-#### TASK-001: 基本設定UIの実装
+#### TASK-001: ユーザープリファレンス UI基盤 + テーマ切替
 
 - [ ] **タスク完了**
 - **タスクタイプ**: TDD
-- **要件リンク**: REQ-001, REQ-101, REQ-102, REQ-103, REQ-104, REQ-105, REQ-106
+- **要件リンク**: REQ-001 (テーマ切替)
 - **依存タスク**: なし
 - **実装詳細**:
-  - Theme選択（light/dark）のselect要素
-  - Refresh Interval選択（Off/5s/10s/30s）のselect要素
-  - Display Density選択（compact/standard）のselect要素
-  - 各selectにaria-label属性を設定
-  - デフォルト値設定（light/Off/standard）
-- **テスト要件**:
-  - [ ] コンポーネントテスト: 3つのselect要素が表示される
-  - [ ] コンポーネントテスト: 各selectに正しい選択肢とデフォルト値が設定
-  - [ ] コンポーネントテスト: アクセシビリティ属性の検証
-  - [ ] コンポーネントテスト: onChange イベントの動作確認
+  - UserPreferences コンポーネントの作成
+  - Theme用 `<select>` (light/dark) の実装
+  - `<html data-theme>` 属性の即時更新機能
+  - 基本的なCSS設定
+- **単体テスト要件**:
+  - [ ] Theme選択でdata-theme属性が変更される
+  - [ ] light/darkの切替が正常に動作する
+  - [ ] 初期値がlightに設定される
 - **UI/UX要件**:
-  - [ ] アクセシビリティ: aria-label属性でスクリーンリーダー対応
-  - [ ] レスポンシブ: モバイル端末での適切な表示
+  - [ ] 設定変更は100ms以内に反映
+  - [ ] テーマ変更で色彩が即座に切り替わる
 - **完了条件**:
-  - [ ] 3つの設定選択UIが正しく表示される
-  - [ ] 各選択肢とデフォルト値が仕様通り設定される
-  - [ ] 全テストがパスする
+  - [ ] テーマ切替が動作している
+  - [ ] 単体テストがパス
+  - [ ] ビジュアル確認完了
 
-#### TASK-002: 即時反映機能の実装
+### フェーズ2: 自動更新間隔と表示密度
+
+#### TASK-002: 自動更新間隔 + 表示密度設定
 
 - [ ] **タスク完了**
 - **タスクタイプ**: TDD
-- **要件リンク**: REQ-001, REQ-101, REQ-103, REQ-105
+- **要件リンク**: REQ-002 (自動更新), REQ-003 (表示密度)
 - **依存タスク**: TASK-001
 - **実装詳細**:
-  - Theme変更時に `<html data-theme="light|dark">` 属性を即座に更新
-  - Refresh Interval変更時に内部タイマー状態を更新
-  - Display Density変更時に `<body>` に `density-compact|density-standard` クラスを適用
-  - useEffect フックを使用した副作用処理
-- **テスト要件**:
-  - [ ] 統合テスト: Theme変更でHTML属性が更新される
-  - [ ] 統合テスト: Density変更でbodyクラスが変更される
-  - [ ] 単体テスト: 各設定変更時の副作用が正しく実行される
+  - 自動更新間隔 `<select>` (Off/5s/10s/30s) の追加
+  - System time更新タイマーの再設定機能
+  - 表示密度 `<select>` (compact/standard) の追加
+  - `<body>` への CSS class適用機能
+- **単体テスト要件**:
+  - [ ] Interval選択でタイマー間隔が変更される
+  - [ ] Density選択でbodyのCSSクラスが変更される
+  - [ ] Off設定でタイマーが停止する
+  - [ ] 各設定の初期値が正しい
 - **UI/UX要件**:
-  - [ ] レスポンス時間: 設定変更から反映まで100ms以内
-  - [ ] 視覚フィードバック: 変更が即座に画面に反映される
+  - [ ] タイマー変更は即座に反映
+  - [ ] 表示密度変更で余白が調整される
 - **完了条件**:
-  - [ ] Theme選択でdata-theme属性が即座に変更される
-  - [ ] Density選択でbodyクラスが即座に変更される
-  - [ ] Interval選択で内部状態が更新される
-  - [ ] 全テストがパスする
+  - [ ] 自動更新間隔設定が動作
+  - [ ] 表示密度設定が動作
+  - [ ] 既存のテーマ設定が正常動作
+  - [ ] 単体テストがパス
 
-### フェーズ2: データ永続化
+### フェーズ3: 永続化機能
 
-#### TASK-003: localStorage保存・読込機能の実装
+#### TASK-003: localStorage永続化
 
 - [ ] **タスク完了**
 - **タスクタイプ**: TDD
-- **要件リンク**: REQ-001
+- **要件リンク**: REQ-004 (永続化)
 - **依存タスク**: TASK-002
 - **実装詳細**:
-  - 各設定変更時にlocalStorageに保存
-  - コンポーネント初期化時にlocalStorageから設定を読込
-  - JSONフォーマットでの設定データ管理
-  - localStorageキー: `userPreferences.theme`, `userPreferences.refreshInterval`, `userPreferences.density`
-- **テスト要件**:
-  - [ ] 単体テスト: 設定変更時のlocalStorage保存機能
-  - [ ] 単体テスト: コンポーネント初期化時の設定読込機能
-  - [ ] 統合テスト: ページリロード後の設定復元
-  - [ ] エラーハンドリング: localStorage無効時の処理
-- **エラーハンドリング**:
-  - [ ] localStorage が無効/利用不可能な場合の処理
-  - [ ] 不正なデータ形式の場合のフォールバック
-- **完了条件**:
-  - [ ] 設定変更がlocalStorageに保存される
+  - localStorage保存機能の実装
+  - ページ読込時の設定復元機能
+  - JSON形式での設定管理
+  - 設定変更時の自動保存
+- **単体テスト要件**:
+  - [ ] 設定がlocalStorageに保存される
   - [ ] ページ再読込で設定が復元される
-  - [ ] 容量制限（1KB以内）を満たす
-  - [ ] 全テストがパスする
+  - [ ] 各設定項目の保存/読込が正常動作
+  - [ ] 不正なデータの処理が適切
+- **テスト要件**:
+  - [ ] localStorage操作のモック
+  - [ ] 設定復元のシミュレーション
+- **完了条件**:
+  - [ ] 全設定の永続化が動作
+  - [ ] ページ再読込テスト完了
+  - [ ] データ容量が1KB以内
+  - [ ] 単体テストがパス
 
-### フェーズ3: リセット機能
+### フェーズ4: リセット機能と統合
 
-#### TASK-004: リセット機能の実装
+#### TASK-004: リセット機能 + 統合テスト
 
 - [ ] **タスク完了**
 - **タスクタイプ**: TDD
-- **要件リンク**: REQ-001
+- **要件リンク**: REQ-005 (リセット)
 - **依存タスク**: TASK-003
 - **実装詳細**:
   - 「Reset to Default」ボタンの追加
-  - confirm()ダイアログでの確認機能
-  - 全設定をデフォルト値に復元
-  - localStorageのクリア処理
-  - DOM属性・クラスの初期化
-- **テスト要件**:
-  - [ ] コンポーネントテスト: リセットボタンの表示
-  - [ ] 単体テスト: confirm()ダイアログの表示
-  - [ ] 統合テスト: リセット後の全設定がデフォルト値に戻る
-  - [ ] 統合テスト: localStorage クリア機能
-  - [ ] 統合テスト: DOM属性・クラスの初期化
+  - 確認ダイアログの実装
+  - 全設定を既定値に戻す機能
+  - localStorageクリア機能
+- **単体テスト要件**:
+  - [ ] Resetで全設定が既定値に戻る
+  - [ ] localStorageが適切にクリアされる
+  - [ ] confirm()ダイアログが表示される
+  - [ ] キャンセル時に変更されない
+- **統合テスト要件**:
+  - [ ] E2Eテスト: 全設定変更 → Reset → 既定値確認
+  - [ ] E2Eテスト: 設定変更 → ページ再読込 → 設定復元
+  - [ ] E2Eテスト: テーマ/間隔/密度の組み合わせテスト
 - **UI/UX要件**:
-  - [ ] 確認ダイアログ: ユーザーの誤操作防止
-  - [ ] 視覚フィードバック: リセット完了の即座反映
-  - [ ] アクセシビリティ: ボタンのfocus状態対応
+  - [ ] リセット確認ダイアログ
+  - [ ] 既定値への即座復元
 - **完了条件**:
-  - [ ] リセットボタンが表示される
-  - [ ] 確認ダイアログが機能する
-  - [ ] 全設定がデフォルト値に戻る
-  - [ ] localStorageがクリアされる
-  - [ ] 全テストがパスする
+  - [ ] リセット機能が完全動作
+  - [ ] 全機能の統合テスト完了
+  - [ ] 受け入れ条件全項目クリア
 
-### フェーズ4: 統合・最適化
+## jscpd 重複コードチェック（TDD 連動）
 
-#### TASK-005: 統合テスト・最適化
+最小の実行手順と出力先を示すこと。必要以上に長くしないこと。
 
-- [ ] **タスク完了**
-- **タスクタイプ**: TDD
-- **要件リンク**: 全要件
-- **依存タスク**: TASK-004
-- **実装詳細**:
-  - E2Eテストシナリオの実装
-  - パフォーマンス最適化
-  - ブラウザ互換性確認
-  - CSS スタイルの調整
-- **テスト要件**:
-  - [ ] E2Eテスト: 完全なユーザーフロー（設定変更→保存→リロード→復元→リセット）
-  - [ ] パフォーマンステスト: レスポンス時間測定
-  - [ ] ブラウザテスト: Chrome/Firefox/Safari対応確認
-  - [ ] アクセシビリティテスト: ARIA属性・キーボード操作
-- **UI/UX要件**:
-  - [ ] モバイル対応: レスポンシブデザイン確認
-  - [ ] 視覚デザイン: 既存UIとの統一性
-  - [ ] ユーザビリティ: 3クリック以内での設定変更
-- **完了条件**:
-  - [ ] 全ユーザーシナリオが正常動作する
-  - [ ] パフォーマンス要件（100ms以内）を満たす
-  - [ ] 主要ブラウザで正常動作する
-  - [ ] 全テストがパスする
+```bash
+cd frontend
+npm run dup
+npm run dup:report  # reports/jscpd/html/index.html
+```
+
+補足（短文）:
+- `dup` は `src` と `../backend` を対象に実行します
+- 閾値・除外パターンは `frontend/package.json` の `dup:*` で調整
+  - 実行タイミング（推奨）:
+    - `/tdd-green` 完了"直後"に実行（新規実装による重複が出ていないか確認）
+    - `/tdd-refactor` "開始前"に実行（現状の重複を基準化）
+    - `/tdd-refactor` "完了後"に実行（重複削減の効果を HTML レポートで検証）
+
+## tsumiki カスタムコマンドの使い方（jscpd連動版）
+
+- Green 直後の重複確認まで一括:
+  - claude -p "/tdd-green-with-jscpd"
+- Refactor 前後の重複計測・評価まで一括:
+  - claude -p "/tdd-refactor-with-jscpd"
+
+通常の `/tdd-green` `/tdd-refactor` を使う場合は、上記コマンドの代わりに手動で `cd frontend && npm run dup`（必要なら `dup:report`）を挟んでください。
+
+## Cursor レビュー依頼テンプレート（全タスク共通）
+
+#### TASK-001 /tdd-green 用
+```text
+TASK-001 に対する /tdd-green の成果物をレビューしてください。
+
+対象:
+- 機能: ユーザープリファレンス UI基盤 + テーマ切替の最小実装
+- 変更ファイル（例）:
+  - frontend/src/UserPreferences.jsx
+  - frontend/src/UserPreferences.test.jsx
+  - frontend/src/App.css
+
+確認観点:
+- 要件の満たし方
+- Red → Green の成立（テストの妥当性）
+- 命名・責務分割・可読性
+```
+
+#### TASK-001 /tdd-refactor 用
+```text
+TASK-001 に対する /tdd-refactor の成果物をレビューしてください。
+
+対象:
+- 重複排除・命名改善・責務整理のリファクタリング
+
+確認観点:
+- 動作維持（テストはグリーン）
+- 重複削減・見通し・拡張性
+```
+
+#### TASK-002 /tdd-green 用
+```text
+TASK-002 に対する /tdd-green の成果物をレビューしてください。
+
+対象:
+- 機能: 自動更新間隔 + 表示密度設定の最小実装
+- 変更ファイル（例）:
+  - frontend/src/UserPreferences.jsx
+  - frontend/src/UserPreferences.test.jsx
+  - frontend/src/App.css
+
+確認観点:
+- 要件の満たし方
+- Red → Green の成立（テストの妥当性）
+- 命名・責務分割・可読性
+```
+
+#### TASK-002 /tdd-refactor 用
+```text
+TASK-002 に対する /tdd-refactor の成果物をレビューしてください。
+
+対象:
+- 重複排除・命名改善・責務整理のリファクタリング
+
+確認観点:
+- 動作維持（テストはグリーン）
+- 重複削減・見通し・拡張性
+```
+
+#### TASK-003 /tdd-green 用
+```text
+TASK-003 に対する /tdd-green の成果物をレビューしてください。
+
+対象:
+- 機能: localStorage永続化の最小実装
+- 変更ファイル（例）:
+  - frontend/src/UserPreferences.jsx
+  - frontend/src/UserPreferences.test.jsx
+
+確認観点:
+- 要件の満たし方
+- Red → Green の成立（テストの妥当性）
+- 命名・責務分割・可読性
+```
+
+#### TASK-003 /tdd-refactor 用
+```text
+TASK-003 に対する /tdd-refactor の成果物をレビューしてください。
+
+対象:
+- 重複排除・命名改善・責務整理のリファクタリング
+
+確認観点:
+- 動作維持（テストはグリーン）
+- 重複削減・見通し・拡張性
+```
+
+#### TASK-004 /tdd-green 用
+```text
+TASK-004 に対する /tdd-green の成果物をレビューしてください。
+
+対象:
+- 機能: リセット機能 + 統合テストの最小実装
+- 変更ファイル（例）:
+  - frontend/src/UserPreferences.jsx
+  - frontend/src/UserPreferences.test.jsx
+
+確認観点:
+- 要件の満たし方
+- Red → Green の成立（テストの妥当性）
+- 命名・責務分割・可読性
+```
+
+#### TASK-004 /tdd-refactor 用
+```text
+TASK-004 に対する /tdd-refactor の成果物をレビューしてください。
+
+対象:
+- 重複排除・命名改善・責務整理のリファクタリング
+
+確認観点:
+- 動作維持（テストはグリーン）
+- 重複削減・見通し・拡張性
+```
 
 ## 実行順序
 
 ```mermaid
 gantt
-    title User Preferences タスク実行スケジュール
+    title User Preferences 実装スケジュール
     dateFormat  YYYY-MM-DD
-    section 基盤構築
-    TASK-001: 基本設定UI           :a1, 2025-08-10, 2h
-    TASK-002: 即時反映機能         :a2, after a1, 2h
-    section データ永続化
-    TASK-003: localStorage機能     :b1, after a2, 2h
-    section リセット機能
-    TASK-004: リセット機能         :c1, after b1, 1h
-    section 統合・最適化
-    TASK-005: 統合テスト・最適化   :d1, after c1, 1h
+    section UI基盤
+    TASK-001 UI基盤+テーマ      :t1, 2024-01-01, 2d
+    section 設定機能
+    TASK-002 間隔+密度          :t2, after t1, 2d
+    section 永続化
+    TASK-003 localStorage       :t3, after t2, 2d
+    section 統合
+    TASK-004 リセット+統合      :t4, after t3, 2d
 ```
 
 ## サブタスクテンプレート
@@ -174,218 +288,3 @@ gantt
 4. `tdd-green.md` - 最小実装
 5. `tdd-refactor.md` - リファクタリング
 6. `tdd-verify-complete.md` - 品質確認
-
-### DIRECTタスクの場合
-
-各タスクは以下のDIRECTプロセスで実装:
-
-1. `direct-setup.md` - 直接実装・設定
-2. `direct-verify.md` - 動作確認・品質確認
-
-## 実行コマンド例
-
-### TDD開発サイクル
-
-```bash
-# TASK-001: 基本設定UI
-claude -p "/tdd-red"    # → "TASK-001の失敗テストを作成"
-claude -p "/tdd-green"  # → "TASK-001を最小実装でGreen化"
-claude -p "/tdd-refactor" # → "TASK-001のリファクタリング"
-
-# TASK-002: 即時反映機能
-claude -p "/tdd-red"    # → "TASK-002の失敗テストを作成"
-claude -p "/tdd-green"  # → "TASK-002を最小実装でGreen化"
-claude -p "/tdd-refactor" # → "TASK-002のリファクタリング"
-
-# 以下同様にTASK-003〜005を実施
-```
-
-### テスト実行
-
-```bash
-# フロントエンドテスト実行
-docker compose exec frontend sh -lc "npm test -- --run"
-
-# リント・タイプチェック
-docker compose exec frontend sh -lc "npm run lint"
-```
-
-## Cursor レビュー依頼テンプレート
-
-tsumiki のスラッシュコマンド実行後に、以下を Cursor にコピペしてください。
-
-### /tdd-green 用
-
-```text
-TASK-００１ に対する /tdd-green の成果物をレビューしてください。
-
-対象:
-- 機能: ユーザープリファレンス UI の最小実装（Theme / Refresh Interval / Display Density）
-- 変更ファイル（例）:
-  - frontend/src/UserPreferences.jsx
-  - frontend/src/UserPreferences.test.jsx
-
-確認観点:
-- 要件の満たし方（REQ-001, REQ-101, REQ-102）
-- テストの妥当性と網羅性（Red → Green が成立しているか）
-- 命名・責務分割・可読性（過剰な実装がないか）
-
-補足:
-- ローカルでテストはグリーンです（npm test）。
-```
-
-### /tdd-refactor 用
-
-```text
-TASK-００１ に対する /tdd-refactor の成果物をレビューしてください。
-
-対象:
-- 重複排除・命名改善・責務整理のリファクタリング
-- 変更ファイル（例）:
-  - frontend/src/UserPreferences.jsx
-  - frontend/src/UserPreferences.test.jsx
-
-確認観点:
-- 動作は維持されているか（テストはグリーン）
-- 重複の削減・見通しの良さ・拡張性
-- コンポーネント分割と依存方向が適切か
-
-補足:
-- 必要に応じて重複検出ツール（jscpd など）の観点もお願いします。
-```
-
-### 一括レビュー依頼テンプレート（TASK-001〜005）
-
-以下をそのままコピーして、対象タスク番号だけ差し替えて使えます。
-
-#### TASK-001 基本設定UI
-- /tdd-green
-```text
-TASK-001 に対する /tdd-green の成果物をレビューしてください。
-
-対象:
-- UI: Theme/Refresh Interval/Display Density のselect要素（デフォルト light/Off/standard）
-- 変更ファイル（例）:
-  - frontend/src/UserPreferences.jsx
-  - frontend/src/UserPreferences.test.jsx
-
-確認観点:
-- 3つのselect表示、選択肢と初期値、aria-label の有無
-- Red→Green 成立（テスト妥当性）
-- 命名・責務分割・過不足のない最小実装
-```
-
-- /tdd-refactor
-```text
-TASK-001 に対する /tdd-refactor の成果物をレビューしてください。
-
-対象:
-- 重複排除（App側とのUI重複がないこと）
-- 共通化・定数の外出し、アクセシビリティ改善
-
-確認観点:
-- 動作維持（全テストGreen）
-- 見通し・拡張性・依存方向の適切さ
-```
-
-#### TASK-002 即時反映機能
-- /tdd-green
-```text
-TASK-002 に対する /tdd-green の成果物をレビューしてください。
-
-対象:
-- 即時反映: `<html data-theme>`, `<body class="density-*>">`, タイマー間隔の更新
-- 変更ファイル（例）:
-  - frontend/src/UserPreferences.jsx（useEffect等）
-  - frontend/src/App.jsx（必要なら）
-
-確認観点:
-- 100ms以内の反映、視覚的フィードバック
-- テスト（統合/単体）の妥当性
-```
-
-- /tdd-refactor
-```text
-TASK-002 に対する /tdd-refactor の成果物をレビューしてください。
-
-対象:
-- DOM更新ロジックの分離（utils/dom など）
-- ハンドラのメモ化・責務整理
-
-確認観点:
-- 動作維持、重複削減、将来のhook化/最適化しやすさ
-```
-
-#### TASK-003 localStorage 永続化
-- /tdd-green
-```text
-TASK-003 に対する /tdd-green の成果物をレビューしてください。
-
-対象:
-- 保存/復元: localStorage（key: userPreferences.* または userPreferences）
-- 変更ファイル（例）:
-  - frontend/src/UserPreferences.jsx
-  - frontend/src/__tests__/…（保存/復元/エラー系）
-
-確認観点:
-- ページ再読込での復元、1KB以内、エラー時フォールバック
-```
-
-- /tdd-refactor
-```text
-TASK-003 に対する /tdd-refactor の成果物をレビューしてください。
-
-対象:
-- 永続化ロジックの分離（hooks: useLocalStorage / useUserPreferences）
-- バリデーション/エラーハンドリングの共通化
-
-確認観点:
-- 動作維持、APIの明確さ、テスト容易性
-```
-
-#### TASK-004 リセット機能
-- /tdd-green
-```text
-TASK-004 に対する /tdd-green の成果物をレビューしてください。
-
-対象:
-- Resetボタン、confirm()、既定値復元、localStorageクリア、DOM初期化
-
-確認観点:
-- シナリオ一貫性、UI/UX（確認ダイアログ、フィードバック）
-```
-
-- /tdd-refactor
-```text
-TASK-004 に対する /tdd-refactor の成果物をレビューしてください。
-
-対象:
-- リセット処理の関数分離、再利用性、テスト容易性
-
-確認観点:
-- 動作維持、責務分離、エッジケースの扱い
-```
-
-#### TASK-005 統合テスト・最適化
-- /tdd-green
-```text
-TASK-005 に対する /tdd-green の成果物をレビューしてください。
-
-対象:
-- E2Eフロー（変更→保存→リロード→復元→リセット）
-
-確認観点:
-- 主要ブラウザ/パフォーマンス/アクセシビリティ要件
-```
-
-- /tdd-refactor
-```text
-TASK-005 に対する /tdd-refactor の成果物をレビューしてください。
-
-対象:
-- ボトルネック改善（debounce, バッチDOM更新 等）
-- テストの重複/ムダの削減
-
-確認観点:
-- 動作維持、パフォーマンス目標、テストメンテ性
-```
