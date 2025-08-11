@@ -78,3 +78,15 @@ TASK-００１ に対する /tdd-refactor の成果物をレビューしてく�
 補助コマンド（任意）:
 - `/tdd-green-with-jscpd`: /tdd-green 実行後に jscpd 実行 → 結果を Claude に渡して確認
 - `/tdd-refactor-with-jscpd`: /tdd-refactor 前後で jscpd 実行 → 事前計画と事後評価を Claude に渡して確認
+
+## タスク実行ガイド（参照用）
+
+- 実行場所: リポジトリのルート
+- 1タスクあたりの流れ（例: TASK-001）
+  1. 要件・テスト雛形: `claude -p "/tdd-requirements"` → `claude -p "/tdd-testcases"`
+  2. Red: `claude -p "/tdd-red"`
+  3. Green + 重複チェック: `claude -p "/tdd-green-with-jscpd"`
+  4. Refactor（前後で重複計測）: `claude -p "/tdd-refactor-with-jscpd"`
+  5. 完了確認: `claude -p "/tdd-verify-complete"`
+
+- レポート: `reports/jscpd/html/index.html`
