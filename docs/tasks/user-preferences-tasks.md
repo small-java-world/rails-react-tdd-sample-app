@@ -144,6 +144,8 @@ npm run dup:report  # reports/jscpd/html/index.html
 
 通常の `/tdd-green` `/tdd-refactor` を使う場合は、上記コマンドの代わりに手動で `cd frontend && npm run dup`（必要なら `dup:report`）を挟んでください。
 
+参考: ESC 追加情報テンプレや詳細な実行設計は `docs/guides/tsumiki-task-execution-design.md` を参照してください。
+
 ## Cursor レビュー依頼テンプレート（全タスク共通）
 
 #### TASK-001 /tdd-green 用

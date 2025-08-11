@@ -90,3 +90,5 @@ TASK-００１ に対する /tdd-refactor の成果物をレビューしてく�
   5. 完了確認: `claude -p "/tdd-verify-complete"`
 
 - レポート: `reports/jscpd/html/index.html`
+
+→ ESC 追加情報による具体的な指示テンプレは `docs/guides/tsumiki-task-execution-design.md` を参照してください。
