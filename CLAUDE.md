@@ -2,12 +2,13 @@
 
 このプロジェクトでは、Tsumiki 配布のコマンド定義（`.claude/commands/*`）や生成物（`docs/tasks/*.md`）は直接変更しません。
 
-代わりに、/kairo-tasks を実行した際に生成される `docs/tasks/<feature>-tasks.md` に、以下のセクションを必ず含めてください。
+本プロジェクトでは、jscpd を TDD サイクルと連動させ、tsumiki/Claude Code が結果を見て次の作業を行う流れにします。
 
-- 挿入位置: 「実行コマンド例」セクションの直後（見出し `##`/`###` を問わず）。該当見出しがない場合は、文書末尾に追加。
-- 二重挿入の回避: 同一見出しが既に存在する場合は重複させない。
+- /tdd-green の実行「直後」に jscpd を実行し、その結果を Claude に渡してホットスポット確認と軽微な改善方針を得る
+- /tdd-refactor の「開始前」に jscpd を実行し、現状の重複を基準化してリファクタ計画を得る
+- /tdd-refactor の「完了後」に jscpd を実行し、削減効果を確認して残課題を抽出する
 
-## 1) jscpd 重複コードチェック
+## 1) jscpd 重複コードチェック（TDD 連動）
 
 最小の実行手順と出力先を示すこと。必要以上に長くしないこと。
 
@@ -73,3 +74,7 @@ TASK-００１ に対する /tdd-refactor の成果物をレビューしてく�
 メンテナンス方針:
 - `.claude/commands/*` は変更しない
 - 本ガイド内の方針に従って、/kairo-tasks の出力（`docs/tasks/*.md`）へ必要最小限のセクションを含める
+
+補助コマンド（任意）:
+- `/tdd-green-with-jscpd`: /tdd-green 実行後に jscpd 実行 → 結果を Claude に渡して確認
+- `/tdd-refactor-with-jscpd`: /tdd-refactor 前後で jscpd 実行 → 事前計画と事後評価を Claude に渡して確認
